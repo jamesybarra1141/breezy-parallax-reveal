@@ -11,26 +11,52 @@ import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
 const Index = () => {
-  // Enable smooth scrolling
+  // Enable smooth scrolling with improved performance
   useEffect(() => {
+    // Set smooth scrolling
     document.documentElement.style.scrollBehavior = 'smooth';
     
-    // Initialize any JS needed for parallax effects
+    // More efficient scroll handler for parallax
+    const parallaxElements = document.querySelectorAll('.parallax-element');
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       
-      // Add any additional scroll-based animations or parallax effects here
-      document.querySelectorAll('.parallax-element').forEach((element) => {
-        const speed = parseFloat((element as HTMLElement).dataset.speed || '0.5');
-        const offset = scrollTop * speed;
-        (element as HTMLElement).style.transform = `translateY(${offset}px)`;
+      // Use requestAnimationFrame for better performance
+      requestAnimationFrame(() => {
+        // Process parallax elements
+        parallaxElements.forEach((element) => {
+          const speed = parseFloat((element as HTMLElement).dataset.speed || '0.5');
+          const offset = scrollTop * speed;
+          (element as HTMLElement).style.transform = `translateY(${offset}px)`;
+        });
       });
     };
     
-    window.addEventListener('scroll', handleScroll);
+    // Use passive event listener for better scroll performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Check for reveal elements on scroll
+    const revealElements = document.querySelectorAll('.reveal');
+    const checkReveal = () => {
+      const windowHeight = window.innerHeight;
+      const revealPoint = 150;
+      
+      revealElements.forEach((element) => {
+        const revealTop = (element as HTMLElement).getBoundingClientRect().top;
+        
+        if (revealTop < windowHeight - revealPoint) {
+          element.classList.add('active');
+        }
+      });
+    };
+    
+    // Initial check for elements in viewport
+    checkReveal();
+    window.addEventListener('scroll', checkReveal, { passive: true });
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', checkReveal);
       document.documentElement.style.scrollBehavior = 'auto';
     };
   }, []);
