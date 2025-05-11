@@ -87,10 +87,10 @@ const Portfolio = () => {
           className={`text-center max-w-3xl mx-auto mb-16 opacity-0 ${titleInView ? 'animate-fade-in' : ''}`}
           style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Our Work</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Projects</h2>
           <div className="h-1 w-20 bg-blue-600 mx-auto mb-6"></div>
           <p className="text-lg text-gray-600">
-            We take pride in the work we do. Here are some of our recent projects that showcase our expertise and creativity.
+            Explore our innovative solutions and creative projects that deliver real results for our clients.
           </p>
         </div>
         

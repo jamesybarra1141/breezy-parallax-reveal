@@ -18,18 +18,25 @@ const Index = () => {
     
     // More efficient scroll handler for parallax
     const parallaxElements = document.querySelectorAll('.parallax-element');
+    let ticking = false;
+    
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       
-      // Use requestAnimationFrame for better performance
-      requestAnimationFrame(() => {
-        // Process parallax elements
-        parallaxElements.forEach((element) => {
-          const speed = parseFloat((element as HTMLElement).dataset.speed || '0.5');
-          const offset = scrollTop * speed;
-          (element as HTMLElement).style.transform = `translateY(${offset}px)`;
+      if (!ticking) {
+        // Use requestAnimationFrame for better performance
+        window.requestAnimationFrame(() => {
+          // Process parallax elements
+          parallaxElements.forEach((element) => {
+            const speed = parseFloat((element as HTMLElement).dataset.speed || '0.5');
+            const offset = scrollTop * speed;
+            (element as HTMLElement).style.transform = `translateY(${offset}px)`;
+          });
+          ticking = false;
         });
-      });
+        
+        ticking = true;
+      }
     };
     
     // Use passive event listener for better scroll performance
