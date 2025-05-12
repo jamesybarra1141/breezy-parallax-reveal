@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
@@ -11,10 +11,33 @@ import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
 const Index = () => {
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  
   // Enable smooth scrolling with improved performance
   useEffect(() => {
     // Set smooth scrolling with improved easing
     document.documentElement.style.scrollBehavior = 'smooth';
+    
+    // Create intersection observer for smooth scroll animations
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+          }
+        });
+      },
+      { 
+        threshold: 0.15,
+        rootMargin: '0px 0px -10% 0px'
+      }
+    );
+    
+    // Observe all smooth scroll elements
+    const smoothScrollElements = document.querySelectorAll('.smooth-scroll-element');
+    smoothScrollElements.forEach(element => {
+      observerRef.current?.observe(element);
+    });
     
     // More efficient scroll handler for parallax
     const parallaxElements = document.querySelectorAll('.parallax-element');
@@ -69,6 +92,25 @@ const Index = () => {
     // Use passive event listener for better scroll performance
     window.addEventListener('scroll', handleParallax, { passive: true });
     
+    // Initialize smooth scroll elements on page load
+    const initSmoothScroll = () => {
+      // Add smooth-scroll-element class to appropriate elements
+      document.querySelectorAll('h2, h3, p:not(.no-animate), .card, .section-content').forEach((element, index) => {
+        if (!element.classList.contains('smooth-scroll-element') && !element.closest('.no-animate')) {
+          element.classList.add('smooth-scroll-element');
+          
+          // Add staggered delay based on position
+          const delayClass = `stagger-delay-${(index % 5) + 1}`;
+          element.classList.add(delayClass);
+          
+          observerRef.current?.observe(element);
+        }
+      });
+    };
+    
+    // Initialize after a small delay to ensure DOM is fully rendered
+    setTimeout(initSmoothScroll, 100);
+    
     // Improved reveal animation on scroll with better performance
     const revealElements = document.querySelectorAll('.reveal');
     const checkReveal = () => {
@@ -103,6 +145,14 @@ const Index = () => {
       window.removeEventListener('scroll', handleParallax);
       window.removeEventListener('scroll', checkReveal);
       document.documentElement.style.scrollBehavior = 'auto';
+      
+      // Clean up intersection observer
+      if (observerRef.current) {
+        smoothScrollElements.forEach(element => {
+          observerRef.current?.unobserve(element);
+        });
+        observerRef.current.disconnect();
+      }
       
       // Cancel any pending animation frames
       if (rafId) window.cancelAnimationFrame(rafId);

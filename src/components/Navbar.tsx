@@ -15,7 +15,7 @@ const Navbar = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -44,20 +44,32 @@ const Navbar = () => {
                   spy={true}
                   smooth={true}
                   offset={-70}
-                  duration={1000}
-                  className={`cursor-pointer font-medium hover:text-blue-500 transition-colors ${
+                  duration={1000} 
+                  delay={100}
+                  isDynamic={true}
+                  spyThrottle={500}
+                  className={`cursor-pointer font-medium hover:text-blue-500 transition-colors relative group ${
                     scrolled ? 'text-gray-800' : 'text-white'
                   }`}
                 >
                   {item.charAt(0).toUpperCase() + item.slice(1)}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
-        <Button variant="outline" className={`hidden md:block ${scrolled ? 'border-primary text-primary hover:bg-primary/10' : 'border-white text-white hover:bg-white/10'}`}>
-          Get in Touch
-        </Button>
+        <Link
+          to="contact"
+          spy={true} 
+          smooth={true} 
+          offset={-70} 
+          duration={1000}
+        >
+          <Button variant="outline" className={`hidden md:block ${scrolled ? 'border-primary text-primary hover:bg-primary/10' : 'border-white text-white hover:bg-white/10'}`}>
+            Get in Touch
+          </Button>
+        </Link>
         <button className="md:hidden text-2xl">
           ☰
         </button>

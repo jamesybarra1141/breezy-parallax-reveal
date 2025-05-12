@@ -13,6 +13,7 @@ const ParallaxSection = () => {
   const parallaxRef = useRef<HTMLDivElement>(null);
   const layer1Ref = useRef<HTMLDivElement>(null);
   const layer2Ref = useRef<HTMLDivElement>(null);
+  const layer3Ref = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     if (!parallaxRef.current) return;
@@ -46,6 +47,10 @@ const ParallaxSection = () => {
               
               if (layer2Ref.current) {
                 layer2Ref.current.style.transform = `translate3d(0, ${bgOffset * 0.3}px, 0)`;
+              }
+              
+              if (layer3Ref.current) {
+                layer3Ref.current.style.transform = `translate3d(0, ${bgOffset * -0.1}px, 0)`;
               }
             }
           }
@@ -86,7 +91,6 @@ const ParallaxSection = () => {
           backgroundPosition: 'center center',
           opacity: 0.2,
           transform: 'translate3d(0, 0, 0)',
-          transition: 'transform 0.05s cubic-bezier(0.19, 1, 0.22, 1)'
         }}
       ></div>
       
@@ -98,7 +102,15 @@ const ParallaxSection = () => {
           backgroundSize: '120% 120%',
           backgroundPosition: 'center center',
           transform: 'translate3d(0, 0, 0)',
-          transition: 'transform 0.05s cubic-bezier(0.19, 1, 0.22, 1)'
+        }}
+      ></div>
+      
+      <div
+        ref={layer3Ref}
+        className="absolute inset-0 will-change-transform hardware-accelerated"
+        style={{
+          backgroundImage: 'linear-gradient(135deg, rgba(0, 0, 0, 0) 0%, rgba(10, 30, 59, 0.8) 100%)',
+          transform: 'translate3d(0, 0, 0)',
         }}
       ></div>
       
@@ -107,12 +119,19 @@ const ParallaxSection = () => {
         className={`container px-4 relative z-10 text-center text-white opacity-0 ${inView ? 'animate-fade-in' : ''}`}
         style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
       >
-        <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Business?</h2>
-        <p className="text-xl max-w-3xl mx-auto mb-8">
+        <h2 className="text-3xl md:text-4xl font-bold mb-6 smooth-scroll-element">Ready to Transform Your Business?</h2>
+        <p className="text-xl max-w-3xl mx-auto mb-8 smooth-scroll-element stagger-delay-2">
           Let's collaborate to create digital experiences that drive growth and success for your business.
         </p>
-        <Link to="contact" spy={true} smooth={true} offset={-70} duration={1000}>
-          <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
+        <Link 
+          to="contact" 
+          spy={true} 
+          smooth={true} 
+          offset={-70} 
+          duration={1000}
+          className="inline-block smooth-scroll-element stagger-delay-3"
+        >
+          <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
             Start Your Project
           </Button>
         </Link>
