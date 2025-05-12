@@ -1,19 +1,5 @@
 
-#root {
-  max-width: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  text-align: left;
-}
-
-/* Remove padding from container when in mobile view */
-@media (max-width: 640px) {
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
+/* ... keep existing code (root, media query, parallax base styles) */
 
 /* Parallax base styles */
 .parallax-container {

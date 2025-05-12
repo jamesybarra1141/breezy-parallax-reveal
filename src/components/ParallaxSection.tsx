@@ -19,25 +19,27 @@ const ParallaxSection = () => {
     
     // More efficient parallax effect with requestAnimationFrame
     let ticking = false;
+    let rafId: number | null = null;
+    let lastScrollY = window.scrollY;
     
     const handleParallax = () => {
       if (!ticking) {
-        requestAnimationFrame(() => {
+        rafId = requestAnimationFrame(() => {
           if (parallaxRef.current) {
             const scrollPosition = window.scrollY;
             const elementTop = parallaxRef.current.offsetTop;
             const elementHeight = parallaxRef.current.offsetHeight;
             const viewportHeight = window.innerHeight;
             
-            // Only calculate parallax when element is in view
+            // Only calculate parallax when element is in view (performance optimization)
             if (scrollPosition + viewportHeight > elementTop && 
                 scrollPosition < elementTop + elementHeight) {
                 
-              // Calculate position relative to viewport
-              const relativePos = (scrollPosition + viewportHeight - elementTop) / (viewportHeight + elementHeight);
+              // Calculate position relative to viewport with improved accuracy
+              const relativePos = Math.min(1, Math.max(0, (scrollPosition + viewportHeight - elementTop) / (viewportHeight + elementHeight)));
               const bgOffset = (relativePos * 100) - 50; // -50% to 50% range
               
-              // Different speeds for different layers
+              // Apply transform with hardware acceleration
               if (layer1Ref.current) {
                 layer1Ref.current.style.transform = `translate3d(0, ${bgOffset * 0.15}px, 0)`;
               }
@@ -59,7 +61,10 @@ const ParallaxSection = () => {
     // Initial call to set position
     handleParallax();
     
-    return () => window.removeEventListener('scroll', handleParallax);
+    return () => {
+      window.removeEventListener('scroll', handleParallax);
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
   }, []);
   
   return (
@@ -71,26 +76,28 @@ const ParallaxSection = () => {
         backgroundColor: '#0a1e3b',
       }}
     >
-      {/* Parallax background layers */}
+      {/* Parallax background layers with hardware acceleration */}
       <div 
         ref={layer1Ref}
-        className="absolute inset-0 will-change-transform"
+        className="absolute inset-0 will-change-transform hardware-accelerated"
         style={{
           backgroundImage: 'url("https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80")',
           backgroundSize: 'cover',
           backgroundPosition: 'center center',
           opacity: 0.2,
+          transform: 'translate3d(0, 0, 0)',
           transition: 'transform 0.05s cubic-bezier(0.19, 1, 0.22, 1)'
         }}
       ></div>
       
       <div 
         ref={layer2Ref}
-        className="absolute inset-0 will-change-transform"
+        className="absolute inset-0 will-change-transform hardware-accelerated"
         style={{
           backgroundImage: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(10, 30, 59, 0) 70%)',
           backgroundSize: '120% 120%',
           backgroundPosition: 'center center',
+          transform: 'translate3d(0, 0, 0)',
           transition: 'transform 0.05s cubic-bezier(0.19, 1, 0.22, 1)'
         }}
       ></div>
