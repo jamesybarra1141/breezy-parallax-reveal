@@ -64,12 +64,12 @@
 }
 
 .animate-fade-in {
-  animation: fade-in 0.8s ease-out forwards;
+  animation: fade-in 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   will-change: opacity;
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.8s ease-out forwards;
+  animation: fade-in-up 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   will-change: opacity, transform;
 }
 
@@ -90,6 +90,8 @@
 html, body {
   overscroll-behavior-y: none; /* Prevent bounce effects on some browsers */
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Add smooth inertia scrolling for touch devices */
@@ -97,4 +99,24 @@ html, body {
   html, body {
     -webkit-overflow-scrolling: touch;
   }
+}
+
+/* Optimize images for performance */
+img, picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* Optimize CSS transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition-duration: 300ms;
+}
+
+/* Optimize rendering performance */
+.hardware-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
