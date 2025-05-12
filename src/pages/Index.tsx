@@ -21,7 +21,7 @@ const Index = () => {
     let ticking = false;
     let lastScrollY = window.scrollY;
     
-    const handleScroll = () => {
+    const handleParallax = () => {
       if (!ticking) {
         // Use requestAnimationFrame for better performance
         window.requestAnimationFrame(() => {
@@ -36,6 +36,26 @@ const Index = () => {
             (element as HTMLElement).style.transform = `translateY(${offset}px)`;
           });
           
+          // Apply parallax effect to sections with .parallax-section class
+          document.querySelectorAll('.parallax-section').forEach((section) => {
+            const rect = section.getBoundingClientRect();
+            const viewHeight = window.innerHeight;
+            
+            // Only process if section is in viewport or nearby
+            if (rect.top < viewHeight + 300 && rect.bottom > -300) {
+              const sectionTop = rect.top;
+              const parallaxSpeed = parseFloat((section as HTMLElement).dataset.speed || '0.2');
+              const yPos = sectionTop * parallaxSpeed;
+              
+              // Apply smooth transform
+              (section as HTMLElement).style.transform = `translate3d(0, ${yPos}px, 0)`;
+              
+              // Apply opacity effect based on position
+              const opacity = Math.min(1, 1 - (Math.abs(sectionTop) / viewHeight) * 0.5);
+              (section as HTMLElement).style.opacity = opacity.toString();
+            }
+          });
+          
           ticking = false;
         });
         
@@ -44,7 +64,7 @@ const Index = () => {
     };
     
     // Use passive event listener for better scroll performance
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleParallax, { passive: true });
     
     // Improved reveal animation on scroll
     const revealElements = document.querySelectorAll('.reveal');
@@ -68,8 +88,11 @@ const Index = () => {
     checkReveal();
     window.addEventListener('scroll', checkReveal, { passive: true });
     
+    // Initial parallax calculation on load
+    handleParallax();
+    
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleParallax);
       window.removeEventListener('scroll', checkReveal);
       document.documentElement.style.scrollBehavior = 'auto';
     };
@@ -79,11 +102,17 @@ const Index = () => {
     <div className="min-h-screen">
       <Navbar />
       <Hero />
-      <About />
+      <div className="parallax-section" data-speed="0.1">
+        <About />
+      </div>
       <Services />
-      <Projects />
+      <div className="parallax-section" data-speed="0.15">
+        <Projects />
+      </div>
       <ParallaxSection />
-      <Testimonials />
+      <div className="parallax-section" data-speed="0.2">
+        <Testimonials />
+      </div>
       <Contact />
       <Footer />
     </div>

@@ -11,13 +11,16 @@ const ParallaxSection = () => {
     rootMargin: '0px 0px -10% 0px' // Trigger a bit earlier
   });
   const parallaxRef = useRef<HTMLDivElement>(null);
+  const layer1Ref = useRef<HTMLDivElement>(null);
+  const layer2Ref = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     if (!parallaxRef.current) return;
     
     // More efficient parallax effect with requestAnimationFrame
     let ticking = false;
-    const handleScroll = () => {
+    
+    const handleParallax = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           if (parallaxRef.current) {
@@ -29,8 +32,19 @@ const ParallaxSection = () => {
             // Only calculate parallax when element is in view
             if (scrollPosition + viewportHeight > elementTop && 
                 scrollPosition < elementTop + elementHeight) {
-              const offset = (scrollPosition - elementTop + viewportHeight) * 0.3;
-              parallaxRef.current.style.backgroundPositionY = `${-offset}px`;
+                
+              // Calculate position relative to viewport
+              const relativePos = (scrollPosition + viewportHeight - elementTop) / (viewportHeight + elementHeight);
+              const bgOffset = (relativePos * 100) - 50; // -50% to 50% range
+              
+              // Different speeds for different layers
+              if (layer1Ref.current) {
+                layer1Ref.current.style.transform = `translate3d(0, ${bgOffset * 0.15}px, 0)`;
+              }
+              
+              if (layer2Ref.current) {
+                layer2Ref.current.style.transform = `translate3d(0, ${bgOffset * 0.3}px, 0)`;
+              }
             }
           }
           ticking = false;
@@ -40,24 +54,47 @@ const ParallaxSection = () => {
     };
     
     // Use passive event listener for better performance
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleParallax, { passive: true });
     
     // Initial call to set position
-    handleScroll();
+    handleParallax();
     
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleParallax);
   }, []);
   
   return (
     <section 
+      id="cta"
       ref={parallaxRef}
-      className="relative py-32 bg-fixed bg-cover bg-center will-change-transform"
+      className="relative py-32 overflow-hidden"
       style={{
-        backgroundImage: 'url("https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80")',
-        backgroundAttachment: 'fixed'
+        backgroundColor: '#0a1e3b',
       }}
     >
-      <div className="absolute inset-0 bg-blue-900/80"></div>
+      {/* Parallax background layers */}
+      <div 
+        ref={layer1Ref}
+        className="absolute inset-0 will-change-transform"
+        style={{
+          backgroundImage: 'url("https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          opacity: 0.2,
+          transition: 'transform 0.05s cubic-bezier(0.19, 1, 0.22, 1)'
+        }}
+      ></div>
+      
+      <div 
+        ref={layer2Ref}
+        className="absolute inset-0 will-change-transform"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(10, 30, 59, 0) 70%)',
+          backgroundSize: '120% 120%',
+          backgroundPosition: 'center center',
+          transition: 'transform 0.05s cubic-bezier(0.19, 1, 0.22, 1)'
+        }}
+      ></div>
+      
       <div 
         ref={ref}
         className={`container px-4 relative z-10 text-center text-white opacity-0 ${inView ? 'animate-fade-in' : ''}`}

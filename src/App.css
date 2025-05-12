@@ -105,6 +105,15 @@ html, body {
   }
 }
 
+/* Enhanced parallax section styles */
+.parallax-section {
+  position: relative;
+  transition: transform 0.1s cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  z-index: 1;
+}
+
 /* Optimize images for performance */
 img, picture {
   max-width: 100%;
@@ -137,4 +146,17 @@ img, picture {
 
 .ease-in-out-quad {
   transition-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+/* Parallax depth layers */
+.parallax-layer-1 {
+  transform: translateZ(-10px) scale(2);
+}
+
+.parallax-layer-2 {
+  transform: translateZ(-5px) scale(1.5);
+}
+
+.parallax-layer-3 {
+  transform: translateZ(0px) scale(1);
 }
