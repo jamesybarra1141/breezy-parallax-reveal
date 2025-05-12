@@ -13,25 +13,29 @@ import Footer from '@/components/Footer';
 const Index = () => {
   // Enable smooth scrolling with improved performance
   useEffect(() => {
-    // Set smooth scrolling
+    // Set smooth scrolling with improved easing
     document.documentElement.style.scrollBehavior = 'smooth';
     
     // More efficient scroll handler for parallax
     const parallaxElements = document.querySelectorAll('.parallax-element');
     let ticking = false;
+    let lastScrollY = window.scrollY;
     
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      
       if (!ticking) {
         // Use requestAnimationFrame for better performance
         window.requestAnimationFrame(() => {
-          // Process parallax elements
+          const scrollTop = window.scrollY;
+          const scrollDelta = scrollTop - lastScrollY;
+          lastScrollY = scrollTop;
+          
+          // Process parallax elements with optimized calculations
           parallaxElements.forEach((element) => {
             const speed = parseFloat((element as HTMLElement).dataset.speed || '0.5');
             const offset = scrollTop * speed;
             (element as HTMLElement).style.transform = `translateY(${offset}px)`;
           });
+          
           ticking = false;
         });
         
@@ -42,7 +46,7 @@ const Index = () => {
     // Use passive event listener for better scroll performance
     window.addEventListener('scroll', handleScroll, { passive: true });
     
-    // Check for reveal elements on scroll
+    // Improved reveal animation on scroll
     const revealElements = document.querySelectorAll('.reveal');
     const checkReveal = () => {
       const windowHeight = window.innerHeight;
@@ -53,6 +57,9 @@ const Index = () => {
         
         if (revealTop < windowHeight - revealPoint) {
           element.classList.add('active');
+        } else {
+          // Optional: remove class when scrolling back up
+          // element.classList.remove('active');
         }
       });
     };

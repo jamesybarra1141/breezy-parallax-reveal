@@ -86,10 +86,14 @@
   transform: translateY(0) translateZ(0);
 }
 
+/* Enhanced smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Optimize scroll performance */
 html, body {
   overscroll-behavior-y: none; /* Prevent bounce effects on some browsers */
-  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -119,4 +123,18 @@ img, picture {
   transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
+}
+
+/* Smooth scroll anchor offsets */
+:target {
+  scroll-margin-top: 100px;
+}
+
+/* Enhanced animation timing functions */
+.ease-out-expo {
+  transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.ease-in-out-quad {
+  transition-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
